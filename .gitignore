@@ -1,0 +1,8 @@
+build
+.gradle
+.idea
+*.iml
+out
+target/
+vcs-to-couch.ipr
+vcs-to-couch.iws

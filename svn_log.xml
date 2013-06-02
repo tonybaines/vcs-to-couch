@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<log>
+    <logentry revision="6">
+        <author>Fred</author>
+        <date>2013-06-01T13:54:01.000Z</date>
+        <msg>Loreum Ipsum</msg>
+        <paths>
+            <path action='A'>/a/b.txt</path>
+            <path action='D'>/a/c/b.txt</path>
+            <path action='M'>/a/d.txt</path>
+            <path action='R'>/a/e.txt</path>
+        </paths>
+    </logentry>
+</log>
