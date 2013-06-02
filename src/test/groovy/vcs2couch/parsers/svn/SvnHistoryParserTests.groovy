@@ -22,7 +22,7 @@ class SvnHistoryParserTests extends Specification {
     history.size == 6
     history[0].rev == '1'
     history[5].rev == '6'
-//    history[5].paths, hasItemInArray(new RevisionPath(action: Action.ADDED, path: '/branches'))
+    history[5].paths.contains new RevisionPath(action: Action.ADDED, path: '/branches')
   }
 
   def buildTestRepo(String repoDir) {
