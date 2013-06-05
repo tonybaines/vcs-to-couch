@@ -11,17 +11,19 @@ repositories {
 }
 
 dependencies {
+  //Easier to work offline
   compile files(fileTree(dir: 'lib', includes: ['*.jar']))
+  testCompile files(fileTree(dir: 'test-lib', includes: ['*.jar']))
 
-  compile([
-    'org.codehaus.groovy:groovy-all:2.1.3',
+//  compile([
+//    'org.codehaus.groovy:groovy-all:2.1.3',
 //    'commons-httpclient:commons-httpclient:3.0',
 //    'org.codehaus.groovy.modules.http-builder:http-builder:0.6',
-  ])
+//  ])
 
-  testCompile([
-    'org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT',
-  ])
+//  testCompile([
+//    'org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT',
+//  ])
 
 }
 
