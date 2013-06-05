@@ -6,6 +6,6 @@ import vcs2couch.parsers.svn.Revision
 @Category(Revision)
 class SvnRevisionToJson {
   static String toJson(Revision revision) {
-    new JsonBuilder(commit: revision).toPrettyString()
+    new JsonBuilder('commit': revision).toPrettyString()
   }
 }

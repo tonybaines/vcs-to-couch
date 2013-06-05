@@ -26,15 +26,15 @@ class CouchDbSpikeSpec extends Specification {
     http.request(POST, JSON) {
       body = ['commit':
         ['message': 'Changed the World',
-          "date": "2014-06-03T07:44:58+0000",
-          "rev": "1",
-          "paths": [
+          'date': '2014-06-03T07:44:58+0000',
+          'rev': '1',
+          'paths': [
             [
-              "action": "ADDED",
-              "path": "/a/b/c.txt"
+              'action': 'ADDED',
+              'path': '/a/b/c.txt'
             ]
           ],
-          "author": "Bob"
+          'author': 'Bob'
         ]
       ]
     }

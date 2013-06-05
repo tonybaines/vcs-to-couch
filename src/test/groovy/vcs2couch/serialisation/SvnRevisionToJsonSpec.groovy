@@ -6,6 +6,7 @@ import vcs2couch.parsers.svn.Action
 import vcs2couch.parsers.svn.Revision
 import vcs2couch.parsers.svn.RevisionPath
 
+@SuppressWarnings("GroovyVariableNotAssigned")
 class SvnRevisionToJsonSpec extends Specification {
   def "will convert a svn.Revision into JSON"() {
     when:
