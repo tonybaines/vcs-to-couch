@@ -2,7 +2,10 @@ package vcs2couch
 
 import groovyx.net.http.AsyncHTTPBuilder
 import groovyx.net.http.RESTClient
-import static groovyx.net.http.ContentType.*
+
+import java.util.concurrent.Future
+
+import static groovyx.net.http.ContentType.JSON
 
 class CouchDB {
   private final RESTClient http
@@ -17,6 +20,9 @@ class CouchDB {
     this.dbName = dbName
     this.http = new RESTClient(url)
     this.async = new AsyncHTTPBuilder(uri: url)
+    this.async.handler.failure = { resp ->
+      return resp
+    }
   }
 
   boolean databaseExists() {
@@ -54,11 +60,23 @@ class CouchDB {
   }
 
   /*
-   * Using an groovyx.net.http.AsyncHTTPBuilder here is a huge time-saver, but need to think about error handling
+   * Using an groovyx.net.http.AsyncHTTPBuilder here is a huge time-saver, but need to think about
+   * blocking and error handling
+   * e.g.
+   * (1..10000).each { i ->
+   *   futureResponses << couch.insert(json)
+   * }
    *
-   * 10s vs. 90s for 10,000 documents inserted
+   * assert futureResponses.every { response ->
+   *   response.get().success
+   * }
+   *
+   * 20s vs. 90s for 10,000 documents inserted
    */
-  def insert(document) {
-    async.post(path: dbName, requestContentType: JSON.toString(), body: document)
+
+  Future insert(document) {
+    async.post(path: dbName, requestContentType: JSON.toString(), body: document) { resp ->
+      return resp
+    }
   }
 }

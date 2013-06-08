@@ -20,8 +20,11 @@ class Vcs2Couch {
   }
 
   def into(CouchDB couch) {
+    def responses = []
     historyParser.process(source) { commit ->
-      couch.insert(commit.toJson())
+      responses << new InsertionAttempt(revision: commit, responseFuture: couch.insert(commit.toJson()))
     }
+
+    return responses.grep { it.failed }
   }
 }

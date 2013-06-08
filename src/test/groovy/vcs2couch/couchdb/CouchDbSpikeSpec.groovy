@@ -4,11 +4,8 @@ import groovy.json.JsonSlurper
 import org.apache.commons.lang.time.StopWatch
 import spock.lang.Specification
 import vcs2couch.CouchDB
-import vcs2couch.parsers.svn.Action
 import vcs2couch.parsers.svn.Revision
 import vcs2couch.parsers.svn.RevisionPath
-
-import java.util.concurrent.FutureTask
 
 import static vcs2couch.parsers.svn.Action.*
 
@@ -30,16 +27,22 @@ class CouchDbSpikeSpec extends Specification {
     couch.recreateDb()
 
     def stopwatch = new StopWatch()
+    def futureResponses = []
     stopwatch.start()
     (1..10000).each { i ->
-      couch.insert(nextCommit(i).toJson())
+      futureResponses << couch.insert(nextCommit(i).toJson())
+    }
+    stopwatch.split()
+    println("Took $stopwatch to insert")
+
+    assert futureResponses.every { response ->
+      response.get().success
     }
     stopwatch.stop()
-
-    println("Took $stopwatch")
+    println("Took $stopwatch to complete")
 
     then:
-    1 == 1
+    couch.allDocuments().size() == 10000
   }
 
   private Revision nextCommit(int i) {

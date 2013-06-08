@@ -16,10 +16,11 @@ class SvnLogToCouchE2ESpec extends Specification {
     couch.recreateDb()
 
     when: "The stream of log entries is read"
-    vcs2couch.importFrom(history).into(couch)
+    def errors = vcs2couch.importFrom(history).into(couch)
 
     then: "CouchDB will be populated"
     couch.databaseExists()
     couch.allDocuments().size() == 6
+    errors.empty
   }
 }
