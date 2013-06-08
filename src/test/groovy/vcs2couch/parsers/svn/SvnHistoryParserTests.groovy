@@ -14,11 +14,14 @@ class SvnHistoryParserTests extends Specification {
 
   def "parses an XML history from a Subversion path"() {
     when:
-    def history = parser.history(history)
+    def commits = []
+    parser.process(new StringReader(history)) { commit ->
+      commits << commit
+    }
     then:
-    history.size == 6
-    history[0].rev == '1'
-    history[5].rev == '6'
-    history[5].paths.contains new RevisionPath(action: Action.ADDED, path: '/branches')
+    commits.size == 6
+    commits[0].rev == '6'
+    commits[0].paths.contains new RevisionPath(action: Action.ADDED, path: '/branches')
+    commits[5].rev == '1'
   }
 }

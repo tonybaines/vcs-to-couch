@@ -33,12 +33,12 @@ class TestHelpers {
     new File(repoDir).mkdirs()
     runCommand("svnadmin create $repoDir")
     def repoPath = "file://$repoDir"
-    runCommand("svn mkdir $repoPath/trunk -m'test'")
-    runCommand("svn mkdir $repoPath/trunk/src -m'test'")
-    runCommand("svn mkdir $repoPath/trunk/test -m'test'")
-    runCommand("svn mkdir $repoPath/tags -m'test")
-    runCommand("svn mkdir $repoPath/tags/release-1.0 -m'test")
-    runCommand("svn mkdir $repoPath/branches -m'test")
+    runCommand("svn mkdir $repoPath/trunk -m test ")
+    runCommand("svn mkdir $repoPath/trunk/src -m test ")
+    runCommand("svn mkdir $repoPath/trunk/test -m test")
+    runCommand("svn mkdir $repoPath/tags -m test")
+    runCommand("svn mkdir $repoPath/tags/release-1.0 -m test")
+    runCommand("svn mkdir $repoPath/branches -m test")
 
     repoPath
   }

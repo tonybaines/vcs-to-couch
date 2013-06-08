@@ -1,9 +1,11 @@
 package vcs2couch
 
 import vcs2couch.parsers.svn.SvnHistoryParser
+import vcs2couch.serialisation.SvnRevisionToJson
 
 class Vcs2Couch {
-  private final Object historyParser
+  private Object historyParser
+  private Reader source
 
   static Vcs2Couch svn() {
     return new Vcs2Couch(new SvnHistoryParser())
@@ -12,11 +14,16 @@ class Vcs2Couch {
     this.historyParser = historyParser
   }
 
-  Vcs2Couch importFrom(Reader reader) {
+  Vcs2Couch importFrom(Reader source) {
+    this.source = source
     return this
   }
 
-  def into(CouchDB couchDB, String dbName) {
-    //To change body of created methods use File | Settings | File Templates.
+  def into(CouchDB couch) {
+    historyParser.process(source) { commit ->
+      use(SvnRevisionToJson) {
+        couch.insert(commit.toJson())
+      }
+    }
   }
 }

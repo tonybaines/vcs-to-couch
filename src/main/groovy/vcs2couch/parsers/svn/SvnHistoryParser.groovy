@@ -6,31 +6,16 @@ import javax.xml.stream.*
 
 @Log
 public class SvnHistoryParser {
-  static final MAX_DAYS_HISTORY = 30
-  private String username = null
-  private String password = null
- 
-  public SvnHistoryParser() {this(null,null)}
-  public SvnHistoryParser(username, password) {
-    this.username=username
-    this.password=password
-  }
-  
-  def history(svnLogXml) {
-    log.fine("Parsing the Subversion history XML")
-    def result = parseRevisions(svnLogXml)
-    result.sort {a,b -> a.rev <=> b.rev }
-  }
 
-  private def parseRevisions(svnLogXml) {
+  def process(Reader svnLogXml, Closure eachCommit) {
     def result = []
-    log.info("Converting history XML to revisions:\n$svnLogXml")
-    XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(svnLogXml));
+    log.info("Converting SVN history XML to revisions")
+    XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new BufferedReader(svnLogXml))
     use (StaxCategory) {
       try {
         while (reader.hasNext()) {
           if (reader.startElement && reader.name() == 'logentry') {
-            result << processLogEntry(reader)
+            eachCommit.call(processLogEntry(reader))
           }
           reader.next()
         }
