@@ -18,9 +18,7 @@ class SvnRevisionToJsonSpec extends Specification {
       paths: [new RevisionPath(path: "/a/b/c.txt", action: Action.ADDED)])
 
     def json
-    use(SvnRevisionToJson) {
-      json = new JsonSlurper().parseText(revision.toJson())
-    }
+    json = new JsonSlurper().parseText(revision.toJson())
 
     then:
     json.commit.rev == "1"
