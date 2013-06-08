@@ -1,11 +1,16 @@
 package vcs2couch.couchdb
 
 import groovy.json.JsonSlurper
-import groovyx.net.http.HTTPBuilder
+import org.apache.commons.lang.time.StopWatch
 import spock.lang.Specification
+import vcs2couch.CouchDB
+import vcs2couch.parsers.svn.Action
+import vcs2couch.parsers.svn.Revision
+import vcs2couch.parsers.svn.RevisionPath
 
-import static groovyx.net.http.ContentType.JSON
-import static groovyx.net.http.Method.POST
+import java.util.concurrent.FutureTask
+
+import static vcs2couch.parsers.svn.Action.*
 
 class CouchDbSpikeSpec extends Specification {
   private static final String COUCH_URI = "http://localhost:5984/commits"
@@ -21,25 +26,42 @@ class CouchDbSpikeSpec extends Specification {
 
   def "will add a document to a database"() {
     when:
-    HTTPBuilder http = new HTTPBuilder(COUCH_URI)
+    def couch = CouchDB.for("http://localhost:5984/", "commits")
+    couch.recreateDb()
 
-    http.request(POST, JSON) {
-      body = ['commit':
-        ['message': 'Changed the World',
-          'date': '2014-06-03T07:44:58+0000',
-          'rev': '1',
-          'paths': [
-            [
-              'action': 'ADDED',
-              'path': '/a/b/c.txt'
-            ]
-          ],
-          'author': 'Bob'
-        ]
-      ]
+    def stopwatch = new StopWatch()
+    stopwatch.start()
+    (1..10000).each { i ->
+      couch.insert(nextCommit(i).toJson())
     }
+    stopwatch.stop()
+
+    println("Took $stopwatch")
 
     then:
     1 == 1
+  }
+
+  private Revision nextCommit(int i) {
+    new Revision(
+      message: 'Changed the World',
+      date: Date.newInstance(),
+      rev: i.toString(),
+      author: (i % 2 == 0) ? 'Bob' : 'Dave',
+      paths: [
+        new RevisionPath(
+          action: ADDED,
+          path: '/a/b/c.txt'
+        ),
+        new RevisionPath(
+          action: ((i % 3 == 0) ? DELETED : MODIFIED),
+          path: '/a/q.txt'
+        ),
+        new RevisionPath(
+          action: ((i % 5 == 0) ? MODIFIED : REPLACED),
+          path: '/a/b/z.txt'
+        )
+      ],
+    )
   }
 }
