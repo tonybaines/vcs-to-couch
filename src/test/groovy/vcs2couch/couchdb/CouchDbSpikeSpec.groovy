@@ -2,6 +2,7 @@ package vcs2couch.couchdb
 
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.time.StopWatch
+import spock.lang.Ignore
 import spock.lang.Specification
 import vcs2couch.CouchDB
 import vcs2couch.parsers.svn.Revision
@@ -10,7 +11,10 @@ import vcs2couch.parsers.svn.RevisionPath
 import static vcs2couch.parsers.svn.Action.*
 
 class CouchDbSpikeSpec extends Specification {
-  private static final String COUCH_URI = "http://localhost:5984/commits"
+  static final String COUCH_URI = "http://localhost:5984/commits"
+  // The space at the start of this string is important;
+  // without it the request fails with reason "invalid UTF-8 JSON"
+  static final String SUM_REDUCER = " function(key, values, rereduce) { return sum(values); }"
 
   def "will get the contents of a database"() {
     when:
@@ -43,6 +47,30 @@ class CouchDbSpikeSpec extends Specification {
 
     then:
     couch.allDocuments().size() == 10000
+  }
+
+  def "can query a database for counts of occurrences using a map/reduce view"() {
+    when:
+    def couch = CouchDB.for("http://localhost:5984/", "commits")
+
+    couch.createOrReplaceView('indexes', 'pathCounts',
+          [
+              map: """ function(doc){
+                         doc.commit.paths.forEach(function(change){
+                           emit(change.path,1);
+                         });
+                       }""",
+              reduce: SUM_REDUCER
+          ]
+    )
+
+    def commits = couch.findByView('indexes', 'pathCounts')
+
+    commits.each{
+      println "${it.key} => ${it.value}"
+    }
+    then:
+    1 == 1
   }
 
   private Revision nextCommit(int i) {
