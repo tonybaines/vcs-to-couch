@@ -100,7 +100,6 @@ class CouchDB {
       designDoc = ['_id':"_design/$designDocName" as String, 'views': [:]]
     }
 
-    println designDoc
     designDoc.views."$view" = mapper
     rest.put(path: "$dbName/_design/$designDocName", requestContentType: JSON.toString(), body: designDoc)
   }

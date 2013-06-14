@@ -10,9 +10,6 @@ import static vcs2couch.parsers.svn.Action.*
 
 class CouchDbSpikeSpec extends Specification {
   static final String COUCH_URI = "http://localhost:5984/commits"
-  // The space at the start of this string is important;
-  // without it the request fails with reason "invalid UTF-8 JSON"
-  static final String SUM_REDUCER = " function(key, values, rereduce) { return sum(values); }"
 
   def "will get the contents of a database"() {
     when:
@@ -25,7 +22,7 @@ class CouchDbSpikeSpec extends Specification {
 
   def "will add a document to a database"() {
     when:
-    def couch = CouchDB.for("http://localhost:5984/", "commits")
+    def couch = CommitsCouchDB.for("http://localhost:5984/", "commits")
     couch.recreateDb()
 
     def stopwatch = new StopWatch()
@@ -49,22 +46,11 @@ class CouchDbSpikeSpec extends Specification {
 
   def "can query a database for counts of occurrences using a map/reduce view"() {
     when:
-    def couch = CouchDB.for("http://localhost:5984/", "commits")
+    def couch = CommitsCouchDB.for("http://localhost:5984/", "commits")
 
-    couch.createOrReplaceView('indexes', 'pathCounts',
-          [
-              map: """ function(doc){
-                         doc.commit.paths.forEach(function(change){
-                           emit(change.path,1);
-                         });
-                       }""",
-              reduce: SUM_REDUCER
-          ]
-    )
+    def pathCounts = couch.pathCounts
 
-    def commits = couch.findByView('indexes', 'pathCounts')
-
-    commits.each{
+    pathCounts.each{
       println "${it.key} => ${it.value}"
     }
     then:
