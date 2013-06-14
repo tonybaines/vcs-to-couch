@@ -5,7 +5,7 @@ import groovy.util.logging.Log
 @Log
 class TestHelpers {
 
-  def String runCommand(command) {
+  static String runCommand(command) {
     def stdOut = new StringBuffer()
     def stdErr = new StringBuffer()
     Process process = command.execute()
@@ -24,7 +24,7 @@ class TestHelpers {
     stdOut.toString()
   }
 
-  def buildTestRepo() {
+  static buildTestRepo() {
     def repoDir = "${new File('.').absolutePath}/build/test/test-repo"
     // Workaround for Windows file paths
     repoDir = repoDir.replace('\\', '/').replaceFirst('[A-Z]\\:', '')
@@ -43,7 +43,8 @@ class TestHelpers {
     repoPath
   }
 
-  def svn(cmd, directory = '.') {
+  @SuppressWarnings("GrMethodMayBeStatic")
+  String svn(cmd, directory = '.') {
     runCommand("svn $cmd")
   }
   

@@ -1,6 +1,7 @@
 package vcs2couch
 
 import spock.lang.Specification
+import vcs2couch.couchdb.CouchDB
 
 class CouchDBSpec extends Specification{
   static final String TEST_DB_NAME = "testdb"

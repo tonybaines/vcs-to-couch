@@ -1,5 +1,6 @@
 package vcs2couch
 
+import vcs2couch.couchdb.CouchDB
 import vcs2couch.parsers.svn.SvnHistoryParser
 
 class Vcs2Couch {

@@ -1,12 +1,10 @@
-package vcs2couch
+package vcs2couch.couchdb
 
 import groovyx.net.http.AsyncHTTPBuilder
-import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.RESTClient
 
 import java.util.concurrent.Future
 
-import static groovyx.net.http.ContentType.ANY
 import static groovyx.net.http.ContentType.JSON
 
 class CouchDB {
@@ -32,7 +30,7 @@ class CouchDB {
       rest.head(path: dbName)
       return true
     }
-    catch (ex) {
+    catch (ignored) {
       return false
     }
   }
@@ -98,7 +96,7 @@ class CouchDB {
     def designDoc
     try{
       designDoc = rest.get(path: "$dbName/_design/$designDocName", contentType: JSON.toString()).data
-    } catch (ex) {
+    } catch (ignored) {
       designDoc = ['_id':"_design/$designDocName" as String, 'views': [:]]
     }
 

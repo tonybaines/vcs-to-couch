@@ -2,9 +2,7 @@ package vcs2couch.couchdb
 
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.time.StopWatch
-import spock.lang.Ignore
 import spock.lang.Specification
-import vcs2couch.CouchDB
 import vcs2couch.parsers.svn.Revision
 import vcs2couch.parsers.svn.RevisionPath
 
@@ -73,7 +71,7 @@ class CouchDbSpikeSpec extends Specification {
     1 == 1
   }
 
-  private Revision nextCommit(int i) {
+  static Revision nextCommit(int i) {
     new Revision(
       message: 'Changed the World',
       date: Date.newInstance(),
