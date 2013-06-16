@@ -10,20 +10,27 @@ repositories {
   maven { url 'http://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
+// Really only for the Spock SNAPSHOT
+configurations.testCompile {
+  resolutionStrategy.cacheChangingModulesFor 360, 'days'
+}
+
 dependencies {
-  //Easier to work offline
-  compile files(fileTree(dir: 'lib', includes: ['*.jar']))
-  compile files(fileTree(dir: 'http-builder/deps', includes: ['*.jar']))
-  testCompile files(fileTree(dir: 'test-lib', includes: ['*.jar']))
+// Useful for offline working
+//  compile files(fileTree(dir: 'lib', includes: ['*.jar']))
+//  compile files(fileTree(dir: 'http-builder/deps', includes: ['*.jar']))
+//  testCompile files(fileTree(dir: 'test-lib', includes: ['*.jar']))
 
   compile([
     'org.codehaus.groovy:groovy-all:2.1.3',
     'commons-httpclient:commons-httpclient:3.0',
-    'org.codehaus.groovy.modules.http-builder:http-builder:0.6',
   ])
+  compile('org.codehaus.groovy.modules.http-builder:http-builder:0.6') {
+    exclude module: 'groovy'
+  }
 
   testCompile([
-//    'org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT', OFFLINE
+    'org.spockframework:spock-core:1.0-groovy-2.0-SNAPSHOT',
     'commons-lang:commons-lang:2.4'
   ])
 
@@ -40,5 +47,5 @@ task copyToLib(type: Copy) {
 
 task copyToTestLib(type: Copy) {
   into "test-lib"
-  from configurations.testRuntime
+  from configurations.testRuntime - configurations.runtime
 }

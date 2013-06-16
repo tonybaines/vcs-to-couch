@@ -1,6 +1,6 @@
 package vcs2couch.couchdb
 
-import org.hamcrest.Matchers
+import org.spockframework.util.Matchers
 import spock.lang.Specification
 
 class CommitsCouchDBSpec extends Specification {
@@ -14,7 +14,7 @@ class CommitsCouchDBSpec extends Specification {
 
     then:
     1 * couch.createDb()
-    1 * couch.deleteDb()
+    1 * couch.deleteDb(false)
   }
 
   def "ensures that Commits-specific design documents are available"() {
